@@ -6,8 +6,17 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D3991B9F30715196009F2BD9 /* Crafts.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3991B9E30715183009F2BD9 /* Crafts.swift */; };
+		D3991BA1307151FE009F2BD9 /* EntryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3991BA0307151DC009F2BD9 /* EntryDetailView.swift */; };
+		D3991BA3307152BC009F2BD9 /* AddEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3991BA2307152B3009F2BD9 /* AddEntryView.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		D3991B8B30714C17009F2BD9 /* CraftJournal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CraftJournal.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D3991B9E30715183009F2BD9 /* Crafts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crafts.swift; sourceTree = "<group>"; };
+		D3991BA0307151DC009F2BD9 /* EntryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDetailView.swift; sourceTree = "<group>"; };
+		D3991BA2307152B3009F2BD9 /* AddEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEntryView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +41,9 @@
 		D3991B8230714C17009F2BD9 = {
 			isa = PBXGroup;
 			children = (
+				D3991B9E30715183009F2BD9 /* Crafts.swift */,
+				D3991BA0307151DC009F2BD9 /* EntryDetailView.swift */,
+				D3991BA2307152B3009F2BD9 /* AddEntryView.swift */,
 				D3991B8D30714C17009F2BD9 /* CraftJournal */,
 				D3991B8C30714C17009F2BD9 /* Products */,
 			);
@@ -119,6 +131,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3991BA1307151FE009F2BD9 /* EntryDetailView.swift in Sources */,
+				D3991BA3307152BC009F2BD9 /* AddEntryView.swift in Sources */,
+				D3991B9F30715196009F2BD9 /* Crafts.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,6 +268,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app uses the camera to photograph craft items.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -284,6 +300,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app uses the camera to photograph craft items.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

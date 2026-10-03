@@ -1,86 +1,178 @@
-//
-//  ContentView.swift
-//  CraftJournal
-//
-//  Created by iMac07 on 10/3/26.
-//
-
 import SwiftUI
 import CoreData
 
 struct ContentView: View {
+
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
+        sortDescriptors: [
+            NSSortDescriptor(
+                keyPath: \CraftEntry.date,
+                ascending: false
+            )
+        ],
+        animation: .default
+    )
+    private var entries: FetchedResults<CraftEntry>
+
+    @State private var showingAddEntry = false
+    @State private var searchText = ""
 
     var body: some View {
-        NavigationView {
+
+        NavigationStack {
+
             List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
+
+                Section {
+
+                    ForEach(entries) { entry in
+
+                        NavigationLink {
+
+                            EntryDetailView(entry: entry)
+
+                        } label: {
+
+                            EntryRow(entry: entry)
+                        }
+                    }
+
+                    .onDelete(perform: deleteEntries)
+
+                } header: {
+
+                    if !entries.isEmpty {
+                        Text(entries.count == 1 ? "1 entry" : "\(entries.count) entries")
                     }
                 }
-                .onDelete(perform: deleteItems)
             }
+
+            .overlay {
+
+                if entries.isEmpty {
+
+                    if searchText.isEmpty {
+
+                        ContentUnavailableView(
+                            "No Entries Yet",
+                            systemImage: "camera",
+                            description: Text("Tap + to photograph your first craft item.")
+                        )
+
+                    } else {
+
+                        ContentUnavailableView.search(text: searchText)
+                    }
+                }
+            }
+
+            .navigationTitle("Craft Journal")
+
+            .searchable(text: $searchText, prompt: "Search by title")
+
+            .onChange(of: searchText) { _, newValue in
+                if newValue.isEmpty {
+                    entries.nsPredicate = nil
+                } else {
+                    entries.nsPredicate = NSPredicate(
+                        format: "title CONTAINS[cd] %@",
+                        newValue
+                    )
+                }
+            }
+
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+
+                ToolbarItem(placement: .topBarTrailing) {
+
+                    Button {
+
+                        showingAddEntry = true
+
+                    } label: {
+
+                        Label("Add", systemImage: "plus")
                     }
                 }
             }
-            Text("Select an item")
-        }
-    }
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
+            .sheet(isPresented: $showingAddEntry) {
 
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                AddEntryView()
+                    .environment(
+                        \.managedObjectContext,
+                        viewContext
+                    )
             }
         }
     }
 
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
+    private func deleteEntries(offsets: IndexSet) {
 
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        offsets
+            .map { entries[$0] }
+            .forEach(viewContext.delete)
+
+        do {
+
+            try viewContext.save()
+
+        } catch {
+
+            print("Could not delete: \(error)")
+        }
+    }
+}
+
+struct EntryRow: View {
+
+    @ObservedObject var entry: CraftEntry
+
+    var body: some View {
+
+        HStack {
+
+            if let data = entry.photo, let uiImage = UIImage(data: data) {
+
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 60, height: 60)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            } else {
+
+                Image(systemName: "photo")
+                    .frame(width: 60, height: 60)
+                    .foregroundStyle(.secondary)
+            }
+
+            VStack(alignment: .leading) {
+
+                Text(entry.title ?? "Untitled")
+                    .font(.headline)
+
+                Text(entry.craftType ?? "")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                if let location = entry.location, !location.isEmpty {
+                    Text(location)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
 #Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+
+    ContentView()
+        .environment(
+            \.managedObjectContext,
+            PersistenceController.preview.container.viewContext
+        )
 }
